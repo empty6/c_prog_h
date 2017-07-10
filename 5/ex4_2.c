@@ -4,7 +4,6 @@
       Naka, Bunta    */
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 typedef struct Node {
   int val;
@@ -22,8 +21,9 @@ int main(void){
 
 
   //get head char
-  while(scanf("%c", &head)){
-    //judge brackets
+  while((head = getchar()) != EOF){
+    //printf("%c", head);
+    //judge brackets ()=1 {}=2 []=3
     if(head == '('){
       push(&first, 1);
     }else if(head == '{'){
@@ -31,17 +31,17 @@ int main(void){
     }else if(head == '['){
       push(&first, 3);
     }else if(head == ')'){
-      if(pop(&first) != 1){
+      if(first == NULL || pop(&first) != 1){
         //bad bracket match
         result = 1; break;
       }
     }else if(head == '}'){
-      if(pop(&first) != 2){
+      if(first == NULL || pop(&first) != 2){
         //bad bracket match
         result = 1; break;
       }
     }else if(head == ']'){
-      if(pop(&first) != 3){
+      if(first == NULL || pop(&first) != 3){
         //bad bracket match
         result = 1; break;
       }
