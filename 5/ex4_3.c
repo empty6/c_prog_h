@@ -11,17 +11,16 @@ typedef struct Val {
 } Val;
 
 typedef struct Node {
-  Val val;
-  int id;
+  Val *val;
   struct Node *next;
 } Node;
 
-void enqueue(Node**, Node**, Val);
-Val dequeue(Node**, Node**);
+void enqueue(Node**, Node**, int, int);
+void dequeue(Node**, Node**, Val*);
 
 int main(void){
   Node *first = NULL, *last = NULL, *print = NULL;
-  Val tmp_val;
+  Val head_val;
   int i, tmp, customer_num, shop_max;
 
   //init
@@ -31,9 +30,7 @@ int main(void){
   //get needs
   for(i=0;i<customer_num;i++){
     scanf("%d", &tmp);
-    tmp_val.id = i+1;
-    tmp_val.need = tmp;
-    enqueue(&first, &last,tmp_val);
+    enqueue(&first, &last, i+1, tmp);
   }
 
   //exec sell
@@ -42,7 +39,7 @@ int main(void){
     print = first;
     while(print != NULL){
       //print id
-      printf("C%d", (print->val).id);
+      printf("C%d", (print->val)->id);
 
       //move next
       print = print->next;
@@ -55,37 +52,51 @@ int main(void){
       }
     }
 
-    //get head customer
-    tmp_val = dequeue(&first, &last);
-    if(tmp_val.need > shop_max){
-      //remain needs
-      tmp_val.need -= shop_max;
-      enqueue(&first, &last, tmp_val);
+    //sell for first
+    dequeue(&first, &last, &head_val);
+    if(head_val.need > shop_max){
+      //remain need
+      head_val.need -= shop_max;
+      enqueue(&first, &last, head_val.id, head_val.need);
     }
   }
 
   return 0;
 }
 
-//enqueue val
-void enqueue(Node **first, Node **last, Val val){
-  Node *new = malloc(sizeof(Node));
-  if(new == NULL) exit(2);  //malloc error
-  new->val = val;
-  if(*first==NULL)
-    *first = new;
-  else
-    (*last)->next = new;
-  *last = new;
+//enqueue
+void enqueue(Node **first, Node **last, int id, int need){
+  Node *new_node = malloc(sizeof(Node));
+  if(new_node == NULL) exit(2);  //malloc error
+  Val *new_val = malloc(sizeof(Val));
+  if(new_val == NULL) exit(2);  //malloc error
+
+  //set val
+  new_val->id = id;
+  new_val->need = need;
+  new_node->val = new_val;
+  new_node->next = NULL;
+
+  //set queue
+  if(*first == NULL){
+    *first = new_node;
+  }else{
+    if(*last == NULL)puts("WTF?");
+    (*last)->next = new_node;
+  }
+  *last = new_node;
 }
 
 //dequeue
-Val dequeue(Node **first, Node **last){
-  Val val;
+void dequeue(Node **first, Node **last, Val *val){
   Node *tmp = *first;
   if(tmp == NULL) exit(2);  //adress error
-  val = tmp->val;
+
+  //copy vals
+  val->id = (tmp->val)->id;
+  val->need = (tmp->val)->need;
+
+  //move first
   *first = tmp->next;
   free(tmp);
-  return val;
 }
