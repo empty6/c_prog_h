@@ -16,27 +16,35 @@ int pop(Node**);
 
 
 int main(void){
-  Node *first = NULL;
-  char command[10];
+  Node *first = NULL, *print = NULL;
+  char command[11];
   int input;
 
-  while(1){
-    //get task
-    scanf("%s", command);
-
+  //get task
+  while(scanf("%s", command) != EOF){
     if(strcmp(command, "push") == 0){
       scanf("%d", &input);
-      printf("push %d\n", input);
+      push(&first, input);
     }else if(strcmp(command, "pop") == 0){
       printf("%d\n", pop(&first));
     }else if(strcmp(command, "printstack") == 0){
-      //pop all
-      while(first != NULL){
-        puts("!");
-        printf("%d", pop(&first));
+      //print all
+      print = first;
+      while(print != NULL){
+        printf("%d", print->val);
+        print = print->next;
+        if(print != NULL){
+          printf(" ");
+        }else{
+          printf("\n");
+        }
       }
-      break;
     }
+  }
+
+  //pop all
+  while(first != NULL){
+    pop(&first);
   }
   return 0;
 }
