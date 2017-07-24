@@ -1,5 +1,5 @@
 /*
-      ex_fin_2
+      ex_final_2
       naka.b.aa
       Naka, Bunta    */
 #include <stdio.h>
@@ -14,8 +14,6 @@ int count = 0;
 
 typedef struct lnode {
   int docId;          //id
-  //int frec;           //TF
-  //int score;          //score
   struct lnode *next; //next node
 } lnode;
 
@@ -45,7 +43,7 @@ int main(int argc, char **argv){
   char *fname, *tokenTmp, rowTmp[ROW_LEN], query[TERM_LEN];
   tnode *root=NULL, *hit;
 
-  //get input file
+  //open input file
   if(argc!=2){
     fprintf(stderr, "Usage: %s prob_file\n", argv[0]);
     return 1;
@@ -57,6 +55,7 @@ int main(int argc, char **argv){
     return 1;
   }
 
+  //get row
   while(fgets(rowTmp, ROW_LEN, fp) != NULL){
     strtok(rowTmp, "\n\0");  //delete "\n"
 
@@ -66,15 +65,21 @@ int main(int argc, char **argv){
 
     //cut term
     while((tokenTmp = strtok(NULL, " ")) != NULL){
+      //search Tree
       hit = search(root, tokenTmp);
       if(hit == NULL){
+        //create Node
         hit = insertTerm(&root, tokenTmp, NULL);
       }
+      //add id to posting list
       insertList(&(hit->pos), idTmp);
     }
   }
   fclose(fp);
+
+  //get query
   scanf("%s", query);
+  //search
   hit = search(root, query);
   if(hit == NULL || hit->pos == NULL){
     printf("Not found");
@@ -82,7 +87,6 @@ int main(int argc, char **argv){
     printList(hit->pos);
   }
 
-  //printTree(root);
   freeTree(root);
 
   return 0;
@@ -116,16 +120,17 @@ tnode* createTNode(tnode **parent, char *term, int isLeft, lnode *pos){
 //insert term
 tnode* insertTerm(tnode **parent, char *term, lnode *pos){
   if((*parent) == NULL){
+    //empty Tree
     return createTNode(parent, term, 1, pos);
   }else if(strcmp((*parent)->term, term) > 0){
-    //left
+    //go left
     if((*parent)->left == NULL){
       return createTNode(parent, term, 1, pos);
     }else{
       return insertTerm(&((*parent)->left), term, pos);
     }
   }else{
-    //right
+    //go right
     if((*parent)->right == NULL){
       return createTNode(parent, term, 0, pos);
     }else{
@@ -134,26 +139,26 @@ tnode* insertTerm(tnode **parent, char *term, lnode *pos){
   }
 }
 
+//print Tree Node
 void printTree(tnode *parent){
   if(parent != NULL){
     printTree(parent->left);
-    printf("%s ", parent->term);
-    printList(parent->pos);
-    puts("");
+    printf("%s\n", parent->term);
     printTree(parent->right);
   }
 }
 
+//Free Tree Node & List
 void freeTree(tnode *parent){
   if(parent != NULL){
     freeTree(parent->left);
     freeTree(parent->right);
-
     freeList(parent->pos);
     free(parent);
   }
 }
 
+//insert to list
 lnode* createLNode(lnode **parent, lnode *child, int id){
   lnode *new = malloc(sizeof(lnode));
   if(new == NULL) exit(2);  //malloc error
@@ -167,13 +172,13 @@ lnode* createLNode(lnode **parent, lnode *child, int id){
   return new;
 }
 
+//add id to list
 lnode* insertList(lnode **parent, int id){
   if(*parent == NULL){
     return createLNode(parent, NULL, id);
   }else{
     lnode *pivot = *parent;
     while(pivot->next != NULL){
-      //本当はinsert先を探す
       pivot = pivot->next;
     }
     if(pivot->docId == id)
@@ -182,15 +187,16 @@ lnode* insertList(lnode **parent, int id){
   }
 }
 
+//print List Node
 void printList(lnode *head){
   lnode *pivot = head;
   while(pivot != NULL){
-    //printf("%d ", pivot->docId);
     printf("%d\n", pivot->docId);
     pivot = pivot->next;
   }
 }
 
+//free List Node
 void freeList(lnode *head){
   lnode *pivot = head;
   lnode *tmp;
@@ -226,6 +232,5 @@ tnode* search(tnode *parent, char* term){
       return search(parent->right, term);
     }
   }
-  //探した後にその位置にAddできた方が良い
   return NULL;
 }

@@ -1,5 +1,5 @@
 /*
-      ex_fin_1
+      ex_final_1
       naka.b.aa
       Naka, Bunta    */
 #include <stdio.h>
@@ -7,8 +7,6 @@
 #include <string.h>
 
 #define ROW_LEN 21
-
-int count = 0;
 
 typedef struct tnode{
   char *term;
@@ -26,7 +24,7 @@ int main(int argc, char **argv){
   char *fname, termTmp[ROW_LEN];
   tnode *root = NULL;
 
-  //get input file
+  //open input file
   if(argc!=2){
     fprintf(stderr, "Usage: %s prob_file\n", argv[0]);
     return 1;
@@ -38,6 +36,7 @@ int main(int argc, char **argv){
     return 1;
   }
 
+  //get terms
   while(fgets(termTmp, ROW_LEN, fp) != NULL){
     strtok(termTmp, "\n\0");  //delete "\n"
     insertTerm(&root, termTmp);
@@ -54,13 +53,16 @@ int main(int argc, char **argv){
 void createTNode(tnode **parent, char *term, int isLeft){
   tnode *new = malloc(sizeof(tnode));
   if(new == NULL) exit(2);  //malloc error
+
   char *newTerm = malloc(sizeof(char) * (strlen(term) + 1));
   if(newTerm == NULL) exit(2);  //malloc error
   strcpy(newTerm, term);
+
   new->term = newTerm;
   new->left = NULL;
   new->right = NULL;
 
+  //set Tree
   if((*parent) != NULL){
     if(isLeft){
       (*parent)->left = new;
@@ -75,16 +77,17 @@ void createTNode(tnode **parent, char *term, int isLeft){
 //insert term
 void insertTerm(tnode **parent, char *term){
   if((*parent) == NULL){
+    //empty Tree
     createTNode(parent, term, 1);
   }else if(strcmp((*parent)->term, term) < 0){
-    //right
+    //go right
     if((*parent)->right == NULL){
       createTNode(parent, term, 0);
     }else{
       insertTerm(&((*parent)->right), term);
     }
   }else{
-    //left
+    //go left
     if((*parent)->left == NULL){
       createTNode(parent, term, 1);
     }else{
@@ -93,6 +96,7 @@ void insertTerm(tnode **parent, char *term){
   }
 }
 
+//print Tree Node
 void printTree(tnode *parent){
   if(parent != NULL){
     printTree(parent->left);
@@ -101,6 +105,7 @@ void printTree(tnode *parent){
   }
 }
 
+//free Tree Node
 void freeTree(tnode *parent){
   if(parent != NULL){
     freeTree(parent->left);
