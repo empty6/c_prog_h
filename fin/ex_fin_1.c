@@ -1,5 +1,5 @@
 /*
-      ex_fin_2
+      ex_fin_1
       naka.b.aa
       Naka, Bunta    */
 #include <stdio.h>
