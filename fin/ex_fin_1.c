@@ -39,6 +39,7 @@ int main(int argc, char **argv){
   }
 
   while(fgets(termTmp, ROW_LEN, fp) != NULL){
+    strtok(termTmp, "\n\0");  //delete "\n"
     insertTerm(&root, termTmp);
   }
   fclose(fp);
@@ -95,7 +96,7 @@ void insertTerm(tnode **parent, char *term){
 void printTree(tnode *parent){
   if(parent != NULL){
     printTree(parent->left);
-    printf("%s", parent->term);
+    printf("%s\n", parent->term);
     printTree(parent->right);
   }
 }
