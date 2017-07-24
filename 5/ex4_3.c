@@ -1,5 +1,5 @@
 /*
-      ex4-2
+      ex4-3
       naka.b.aa
       Naka, Bunta    */
 #include <stdio.h>
@@ -81,7 +81,6 @@ void enqueue(Node **first, Node **last, int id, int need){
   if(*first == NULL){
     *first = new_node;
   }else{
-    if(*last == NULL)puts("WTF?");
     (*last)->next = new_node;
   }
   *last = new_node;
