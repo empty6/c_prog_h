@@ -1,0 +1,134 @@
+\documentclass[a4j,11pt]{jarticle}
+\usepackage{epsfig,here}
+\usepackage{url}
+
+\setlength{\textwidth}{1.1\textwidth}
+\setlength{\oddsidemargin}{-3pt}
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{10mm}
+\setlength{\headheight}{0mm}
+\setlength{\headsep}{0mm}
+
+\begin{document}
+
+\begin{center}
+%\noindent
+　\vspace{10mm}
+
+{\bf {\huge 手続き型プログラミング基礎　期末レポート}}
+%\end{center}
+
+\vspace{80mm}
+
+提出日：yyyy年mm月dd日
+
+\vspace{10mm}
+
+系／学科／類：XXXXX系
+
+\vspace{10mm}
+
+学籍番号：XX\_{}XXXXX
+
+\vspace{10mm}
+
+ログイン名：xxxxxx.xx.x
+
+\vspace{20mm}
+
+{\bf {\LARGE 氏名：情報 太郎}}
+\end{center}
+
+\newpage
+
+\section{問1　単回帰分析}
+\subsection*{(a) 作成したプログラムを提示し、プログラムの内容や、工夫した点について説明せよ。}
+まずプログラム本体を、行番号付きで掲載すること。プログラムをそのままここにペーストしても読みづらい。
+読みやすくする工夫を行うこと（listings, verbatimを利用する、など）。
+
+説明は必ず文章で記述すること。箇条書きのみはNG（箇条書きを使ってはいけないわけではない）。
+
+自分以外の人が読んでも次の点が明らかになり、プログラムの中身が理解できるように記述すること。
+
+\begin{enumerate}
+  \item 重要な変数、配列、関数、制御構造
+  \item 用いたアルゴリズムなど
+\end{enumerate}
+
+プログラム中で工夫した点についても説明する。
+
+\begin{enumerate}
+  \item より効率の良い実装方法
+  \item 手順
+  \item 他の実装方法と比較した場合の処理効率の違い（演算回数、比較回数、ループの回数の比較）など
+\end{enumerate}
+
+結果が{\bf AC}にならなかった場合は、理由を考えて説明する。
+
+改良の可能性があれば触れる。
+
+\subsection*{(b) 回帰曲線の形を$y=ax^2+bx+c$に変更したい。どのようにプログラムを変更すべきか説明せよ。}
+直接実装した結果を説明とともに記しても良いし、変更の方針だけ答えても良い。図や表などを使っても良い。
+
+
+\section{問2　最長共通部分列}
+\subsection*{(a) 作成したプログラムを提示し、プログラムの内容や、工夫した点について説明せよ。}
+\subsection*{(b) 入力された文字列の文字数をそれぞれ$n,m$とする。プログラムの実行時間を複数計測してその結果を示し、実行時間が$n$および$m$とどのような関係にあるか推測せよ。}
+複数の$n, m$について実行時間を{\tt time}コマンドで計測し、表などを用いて結果を示すこと（たとえば表\ref{time}）。
+
+\begin{table}[htbp]
+  \centering
+  \caption{最長共通部分列のプログラムの実行時間}
+  \label{time}
+  \begin{tabular}{l|rrc} \hline
+  $n$ & 10 & 10 & … \\
+  $m$ & 10 & 20 & … \\\hline 
+  実行時間(s) & 0.002 & 0.003 & … \\\hline
+  \end{tabular}
+\end{table}
+
+\subsection*{(c) 最長共通部分列が複数あるときに、重複を除いて全て出力するプログラムに変更したい。どのように変更すべきか説明せよ。}
+
+
+\section{問3　ライフゲーム}
+\subsection*{(a) 作成したプログラムを提示し、プログラムの内容や、工夫した点について説明せよ。}
+\subsection*{(b) 格子を「周期境界」（上下端と左右端が繋がっている＝トーラス状）に変更したい。どのようにプログラムを変更すべきか、説明せよ。}
+周期境界等は、図\ref{life}に示すように、上下端と左右端が繋がっており、境界を超えて反対の境界に現れるような盤面である。
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics{lifegame.eps}
+  \caption{周期境界の説明図}
+  \label{life}
+\end{figure}
+
+
+\subsubsection*{以下、参考文献について}
+\begin{itemize}
+\item 参考文献がない場合は、参考文献の章を出力しない
+\item 参照していない参考文献を掲載しない
+\item 参考文献の引用箇所を明示的に示す（例を参考に）
+\item レポート作成時点にておいて無効なURLは参考文献にはできない
+\item 書式を整えて記載する
+\end{itemize}
+
+\subsubsection*{一般的な注意事項}
+作成したPDFファイルを見返して確認すること。
+誤字脱字、文字化けなどがあると減点する。「、，」や「。．」が統一されていないなど、基本的なレポートの体裁を成していない場合も当然減点する。
+
+他人のレポートからの剽窃が発覚した場合は、課題レポートの点数に加え、プログラムの点数も大幅に減点する。
+他人のレポートを参考にしてはいけないわけではないが、丸写しは厳禁。
+また、他人のレポートを参考にした場合は必ず出典を示すこと\cite{friend1}。
+自力で考え、努力した跡が見えるプログラム・レポートを高く評価する。
+
+\begin{thebibliography}{20}
+\bibitem{Kanaoka2010} 金岡晃，島岡政基，岡本栄司．IDベース暗号の信頼構築フレームワーク, 情報処理学会論文誌，51(9)，1692-1701 (2010)
+\bibitem{Mirakhorli2016} M. Mirakhorli, J. Cleland-Huang. Detecting, Tracing, and Monitoring Architectural Tactics in Code, IEEE Transactions on Software Engineering, 42(3), 206-220 (2016)
+\bibitem{Chiba1990} 千葉則茂, 村岡一信．レイトレーシングCG入門, Information \& Computing, vol. 46, サイエンス社 (1990)
+\bibitem{KR1989} B.W. カーニハン, D.M. リッチー（石田晴久訳）．プログラミング言語C 第2版 ANSI規格準拠，共立出版 (1989)
+\bibitem{msdn} サンプル コードとプログラミング スタイル \url{https://msdn.microsoft.com/ja-jp/library/cc343825.aspx}（アクセス日：2017/5/18）
+\bibitem{Okumura1991}奥村晴彦．C言語による最新アルゴリズム事典，技術評論社 (1991)
+\bibitem{friend1} ◯◯◯◯(学籍番号 XX\_{}XXXXX，ログイン名xxxx.x.xx). 手続き型プログラミング基礎期末レポート (2017)
+\end{thebibliography}
+\end{document}

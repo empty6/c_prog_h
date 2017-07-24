@@ -1,35 +1,28 @@
 /*
-      ex_fin
+      ex_fin_2
       naka.b.aa
       Naka, Bunta    */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-typedef struct lnode {
-  int docid;          //id
-  int frec;           //TF
-  int score;          //score
-  struct lnode *next; //next node
-} lnode;
+typedef struct tnode{
+  char *term;
+  int dfreq;
+  struct tnode *left;
+  struct tnode *right;
+  lnode *pos;
+} tnode;
 
-void add_list(lnode**, int);
-void insert_list(lnode**, int);
+void insertTerm(tnode**, char*);
+void createTNode(tnode**, vhar*);
+void printTree(tnode**);
+void freeTree(tnode**);
 
 int main(void){
-  lnode *first = NULL, *pivot = NULL;
-  int tmp_id;
+  tnode *root;
 
-  while(scanf("%d", &tmp_id) != EOF){
-    if(tmp_id==0)break;
-    insert_list(&first, tmp_id);
-  }
 
-  //print list
-  pivot = first;
-  while(pivot != NULL){
-    printf("%d ", pivot->docid);
-    pivot = pivot->next;
-  }
 
   return 0;
 }
@@ -44,6 +37,7 @@ printf("add -> %d\n", id);
   *first = new;
 }
 
+//insert id list
 void insert_list(lnode **first, int id){
   lnode *pivot = *first;
   if(pivot == NULL || pivot->docid > id){
@@ -58,4 +52,8 @@ void insert_list(lnode **first, int id){
       pivot = pivot->next;
     }
   }
+}
+
+void add_tree(tnode **prev, char *term){
+
 }

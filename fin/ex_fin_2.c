@@ -30,7 +30,14 @@ void add_tree(tnode**, char*);
 int main(void){
   int tmp_id;
   tnode *high, *low;
-  char word_list[6][7] = {
+  char word_list_high[6][7] = {
+    {"apple"},
+    {"banana"},
+    {"grape"},
+    {"kiwi"},
+    {"mango"},
+    {"orange"}
+  }, word_list_low[6][7] = {
     {"apple"},
     {"grape"},
     {"banana"},
@@ -40,7 +47,7 @@ int main(void){
   };
 
   //set high
-  
+
 
 /*
   while(scanf("%d", &tmp_id) != EOF){
