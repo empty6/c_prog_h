@@ -13,18 +13,32 @@ typedef struct lnode {
 } lnode;
 
 void add_list(lnode**, int);
-void insert_list(lnode**, int);
+void swap_next_2(lnode*);
 
 int main(void){
   lnode *first = NULL, *pivot = NULL;
-  int tmp_id;
+  int tmp_id, sort_f=1;
 
   while(scanf("%d", &tmp_id) != EOF){
     if(tmp_id==0)break;
-    insert_list(&first, tmp_id);
+    printf("->%d\n", tmp_id);
+    add_list(&first, tmp_id);
+
   }
 
-  //print list
+  //bubble sort
+  //edict 0/1/2 list
+  while(sort_f){
+    pivot = first;
+    sort_f = 0;
+    while(pivot->next != NULL){
+      if(pivot->docid > (pivot->next)->docid){
+        swap_next_2(pivot);
+        sort_f = 1;
+      }
+      pivot = pivot->next;
+    }
+  }
   pivot = first;
   while(pivot != NULL){
     printf("%d ", pivot->docid);
@@ -36,7 +50,6 @@ int main(void){
 
 //add
 void add_list(lnode **first, int id){
-printf("add -> %d\n", id);
   lnode *new = malloc(sizeof(lnode));
   if(new == NULL) exit(2);  //malloc error
   new->docid = id;
@@ -44,18 +57,10 @@ printf("add -> %d\n", id);
   *first = new;
 }
 
-void insert_list(lnode **first, int id){
-  lnode *pivot = *first;
-  if(pivot == NULL || pivot->docid > id){
-    add_list(first, id);
-  }else{
-    //search
-    while(pivot != NULL){
-      if(pivot->next == NULL || (pivot->next)->docid > id){
-        add_list(&(pivot->next), id);
-        break;
-      }
-      pivot = pivot->next;
-    }
-  }
+//swap A-B: node->A->B->C => node->B->A->C
+void swap_next_2(lnode *node){
+  lnode *tmp_1 = node->next, *tmp_2 = (node->next)->next;
+  tmp_1->next = tmp_2->next;
+  tmp_2->next = tmp_1;
+  node->next = tmp_2;
 }
