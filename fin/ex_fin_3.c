@@ -344,7 +344,6 @@ void execQuery(qnode **queryStack, tnode *root, char *query){
     pos_1 = popQuery(queryStack);
     pos_2 = popQuery(queryStack);
     result = mergeList(pos_1, pos_2);
-puts("push OR");
     pushQuery(queryStack, result);
   }else if(strcmp(query, "AND") == 0){
     //push intersect
@@ -352,10 +351,8 @@ puts("push OR");
     pos_2 = popQuery(queryStack);
     result = intersectList(pos_1, pos_2);
     pushQuery(queryStack, result);
-puts("push AND");
   }else{
     //push 1 posting
-printf("push %s\n", query);
     hitTNode = search(root, query);
     if(hitTNode != NULL){
       pushQuery(queryStack, hitTNode->pos);
