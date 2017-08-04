@@ -22,6 +22,10 @@ typedef struct tnode{
   lnode *pos;
 } tnode;
 
+typedef struct qnode{
+  lnode *pos;
+  struct qnode *next;
+} qnode;
 
 
 tnode* createTNode(tnode**, char*, int, lnode*);
@@ -36,12 +40,21 @@ void freeList(lnode*);
 
 tnode* search(tnode*, char*);
 
+lnode* mergeList(lnode*, lnode*);
+lnode* intersectList(lnode*, lnode*);
+
+qnode* pushQuery(qnode**, lnode*);
+lnode* popQuery(qnode**);
+void freeQuery(qnode*);
+
+void execQuery(qnode**, tnode*, char*);
 
 int main(int argc, char **argv){
   FILE *fp;
   int idTmp;
   char *fname, *tokenTmp, rowTmp[ROW_LEN], query[TERM_LEN];
-  tnode *root=NULL, *hit;
+  tnode *root=NULL, *hitTNode;
+  qnode *queryStack=NULL;
 
   //open input file
   if(argc!=2){
@@ -66,30 +79,35 @@ int main(int argc, char **argv){
     //cut term
     while((tokenTmp = strtok(NULL, " ")) != NULL){
       //search Tree
-      hit = search(root, tokenTmp);
-      if(hit == NULL){
+      hitTNode = search(root, tokenTmp);
+      if(hitTNode == NULL){
         //create Node
-        hit = insertTerm(&root, tokenTmp, NULL);
+        hitTNode = insertTerm(&root, tokenTmp, NULL);
       }
       //add id to posting list
-      insertList(&(hit->pos), idTmp);
+      insertList(&(hitTNode->pos), idTmp);
     }
   }
   fclose(fp);
 
   //get query
-  scanf("%s", query);
-  //search
-  hit = search(root, query);
-  if(hit == NULL || hit->pos == NULL){
+  //scanf("%s", query);
+  while(scanf("%s", query) != EOF){
+    execQuery(&queryStack, root, query);
+  }
+  if(queryStack == NULL || queryStack->pos == NULL){
     printf("Not found");
+  }else if(queryStack->next != NULL){
+    printf("Query error");
   }else{
-    printList(hit->pos);
+    printList(queryStack->pos);
   }
 
+  freeQuery(queryStack);
   freeTree(root);
 
   return 0;
+
 }
 
 //add node isLeft=true:left
@@ -173,11 +191,11 @@ lnode* createLNode(lnode **parent, lnode *child, int id){
 }
 
 //add id to list
-lnode* insertList(lnode **parent, int id){
-  if(*parent == NULL){
-    return createLNode(parent, NULL, id);
+lnode* insertList(lnode **first, int id){
+  if(*first == NULL){
+    return createLNode(first, NULL, id);
   }else{
-    lnode *pivot = *parent;
+    lnode *pivot = *first;
     while(pivot->next != NULL){
       pivot = pivot->next;
     }
@@ -234,4 +252,115 @@ tnode* search(tnode *parent, char* term){
     }
   }
   return NULL;
+}
+
+
+lnode* mergeList(lnode *l1, lnode *l2){
+  lnode *first=NULL;
+
+  while(l1 != NULL && l2 != NULL){
+    if(l1->docId <= l2->docId){
+      insertList(&first, l1->docId);
+      if(l1->docId == l2->docId)l2 = l2->next;
+      l1 = l1->next;
+    }else if(l1->docId < l2->docId){
+      insertList(&first, l2->docId);
+      l2 = l2->next;
+    }
+  }
+  if(l1 == NULL){
+    while(l2 != NULL){
+      insertList(&first, l2->docId);
+      l2 = l2->next;
+    }
+  }else{
+    while(l1 != NULL){
+      insertList(&first, l1->docId);
+      l1 = l1->next;
+    }
+  }
+  return first;
+}
+
+lnode* intersectList(lnode *l1, lnode *l2){
+  lnode *first=NULL;
+
+  while(l1 != NULL && l2 != NULL){
+    if(l1->docId != l2->docId){
+      if(l1->docId < l2->docId){
+        l1 = l1->next;
+      }else{
+        l2 = l2->next;
+      }
+    }else{
+      insertList(&first, l1->docId);
+      l2 = l2->next;
+      l1 = l1->next;
+    }
+  }
+  return first;
+}
+
+//push query stack
+qnode* pushQuery(qnode **first, lnode *pos){
+  qnode *new = malloc(sizeof(lnode));
+  if(new == NULL) exit(2);  //malloc error
+
+  new->pos = pos;
+  new->next = *first;
+  *first = new;
+  return new;
+}
+
+//pop query stack
+lnode* popQuery(qnode **first){
+  qnode *tmp = *first;
+  lnode *pos;
+
+  pos = tmp->pos;
+  *first = tmp->next;
+  free(tmp);
+
+  return pos;
+}
+
+void freeQuery(qnode *head){
+  qnode *pivot = head;
+  qnode *tmp;
+
+  while(pivot != NULL){
+    tmp = pivot;
+    pivot = pivot->next;
+    free(tmp);
+  }
+}
+
+void execQuery(qnode **queryStack, tnode *root, char *query){
+  lnode *pos_1, *pos_2, *result;
+  tnode *hitTNode;
+
+  if(strcmp(query, "OR") == 0){
+    //push merge
+    pos_1 = popQuery(queryStack);
+    pos_2 = popQuery(queryStack);
+    result = mergeList(pos_1, pos_2);
+puts("push OR");
+    pushQuery(queryStack, result);
+  }else if(strcmp(query, "AND") == 0){
+    //push intersect
+    pos_1 = popQuery(queryStack);
+    pos_2 = popQuery(queryStack);
+    result = intersectList(pos_1, pos_2);
+    pushQuery(queryStack, result);
+puts("push AND");
+  }else{
+    //push 1 posting
+printf("push %s\n", query);
+    hitTNode = search(root, query);
+    if(hitTNode != NULL){
+      pushQuery(queryStack, hitTNode->pos);
+    }else{
+      pushQuery(queryStack, NULL);
+    }
+  }
 }

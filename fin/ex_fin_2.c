@@ -183,6 +183,7 @@ lnode* insertList(lnode **parent, int id){
     }
     if(pivot->docId == id)
       return pivot;
+//探してインサート
     return createLNode(&pivot, NULL, id);
   }
 }
