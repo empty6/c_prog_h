@@ -9,6 +9,7 @@
 #define ROW_LEN 2002
 #define TERM_LEN 21
 
+int count=0;
 
 typedef struct lnode {
   int docId;          //id
@@ -71,6 +72,7 @@ int main(int argc, char **argv){
   //get row
   while(fgets(rowTmp, ROW_LEN, fp) != NULL){
     strtok(rowTmp, "\n\0");  //delete "\n"
+count++;
 
     //cut id
     tokenTmp = strtok(rowTmp, "\t");
@@ -89,10 +91,11 @@ int main(int argc, char **argv){
     }
   }
   fclose(fp);
-
+printf("count %d\n", count);
   //get query
-  //scanf("%s", query);
+puts("put Q");
   while(scanf("%s", query) != EOF){
+    printf("== %s ==", query);
     execQuery(&queryStack, root, query);
   }
   if(queryStack == NULL || queryStack->pos == NULL){
@@ -341,19 +344,25 @@ void execQuery(qnode **queryStack, tnode *root, char *query){
 
   if(strcmp(query, "OR") == 0){
     //push merge
+puts("- merge start-");
     pos_1 = popQuery(queryStack);
     pos_2 = popQuery(queryStack);
     result = mergeList(pos_1, pos_2);
     pushQuery(queryStack, result);
+puts("- merge end-");
   }else if(strcmp(query, "AND") == 0){
+puts("- int start-");
     //push intersect
     pos_1 = popQuery(queryStack);
     pos_2 = popQuery(queryStack);
     result = intersectList(pos_1, pos_2);
     pushQuery(queryStack, result);
+puts("- int end-");
   }else{
     //push 1 posting
+printf("- search %s -\n", query);
     hitTNode = search(root, query);
+printf("- search %s end -\n", query);
     if(hitTNode != NULL){
       pushQuery(queryStack, hitTNode->pos);
     }else{
