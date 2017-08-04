@@ -1,5 +1,5 @@
 /*
-      ex_final_2
+      ex_final_3
       naka.b.aa
       Naka, Bunta    */
 #include <stdio.h>
@@ -9,8 +9,6 @@
 #define ROW_LEN 2002
 #define TERM_LEN 21
 
-
-int count = 0;
 
 typedef struct lnode {
   int docId;          //id
@@ -23,6 +21,8 @@ typedef struct tnode{
   struct tnode *right;
   lnode *pos;
 } tnode;
+
+
 
 tnode* createTNode(tnode**, char*, int, lnode*);
 tnode* insertTerm(tnode**, char*, lnode*);
