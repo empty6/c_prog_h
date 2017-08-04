@@ -9,8 +9,6 @@
 #define ROW_LEN 2002
 #define TERM_LEN 21
 
-int count=0;
-
 typedef struct lnode {
   int docId;          //id
   struct lnode *next; //next node
@@ -72,7 +70,6 @@ int main(int argc, char **argv){
   //get row
   while(fgets(rowTmp, ROW_LEN, fp) != NULL){
     strtok(rowTmp, "\n\0");  //delete "\n"
-count++;
 
     //cut id
     tokenTmp = strtok(rowTmp, "\t");
@@ -91,11 +88,9 @@ count++;
     }
   }
   fclose(fp);
-printf("count %d\n", count);
+
   //get query
-puts("put Q");
   while(scanf("%s", query) != EOF){
-    printf("== %s ==", query);
     execQuery(&queryStack, root, query);
   }
   if(queryStack == NULL || queryStack->pos == NULL){
@@ -260,13 +255,12 @@ tnode* search(tnode *parent, char* term){
 
 lnode* mergeList(lnode *l1, lnode *l2){
   lnode *first=NULL;
-
   while(l1 != NULL && l2 != NULL){
     if(l1->docId <= l2->docId){
       insertList(&first, l1->docId);
-      if(l1->docId == l2->docId)l2 = l2->next;
+      if(l1->docId == l2->docId){l2 = l2->next;}
       l1 = l1->next;
-    }else if(l1->docId < l2->docId){
+    }else if(l1->docId > l2->docId){
       insertList(&first, l2->docId);
       l2 = l2->next;
     }
@@ -341,28 +335,21 @@ void freeQuery(qnode *head){
 void execQuery(qnode **queryStack, tnode *root, char *query){
   lnode *pos_1, *pos_2, *result;
   tnode *hitTNode;
-
   if(strcmp(query, "OR") == 0){
     //push merge
-puts("- merge start-");
     pos_1 = popQuery(queryStack);
     pos_2 = popQuery(queryStack);
     result = mergeList(pos_1, pos_2);
     pushQuery(queryStack, result);
-puts("- merge end-");
   }else if(strcmp(query, "AND") == 0){
-puts("- int start-");
     //push intersect
     pos_1 = popQuery(queryStack);
     pos_2 = popQuery(queryStack);
     result = intersectList(pos_1, pos_2);
     pushQuery(queryStack, result);
-puts("- int end-");
   }else{
     //push 1 posting
-printf("- search %s -\n", query);
     hitTNode = search(root, query);
-printf("- search %s end -\n", query);
     if(hitTNode != NULL){
       pushQuery(queryStack, hitTNode->pos);
     }else{
