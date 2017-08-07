@@ -26,7 +26,7 @@ tnode* insertTerm(tnode**, char*, lnode*);
 void printTree(tnode*);
 void freeTree(tnode*);
 
-lnode* createLNode(lnode**, lnode*, int);
+lnode* createLNode(lnode**, int);
 lnode* insertList(lnode**, int);
 void printList(lnode*);
 void freeList(lnode*);
@@ -156,14 +156,15 @@ void freeTree(tnode *parent){
 }
 
 //insert to list
-lnode* createLNode(lnode **parent, lnode *child, int id){
+lnode* createLNode(lnode **parent, int id){
   lnode *new = malloc(sizeof(lnode));
   if(new == NULL) exit(2);  //malloc error
   new->docId = id;
-  new->next = child;
   if(*parent != NULL){
+    new->next = (*parent)->next;
     (*parent)->next = new;
   }else{
+    new->next = NULL;
     *parent = new;
   }
   return new;
@@ -172,7 +173,7 @@ lnode* createLNode(lnode **parent, lnode *child, int id){
 //add id to list
 lnode* insertList(lnode **first, int id){
   if(*first == NULL){
-    return createLNode(first, NULL, id);
+    return createLNode(first, id);
   }else{
     lnode *pivot = *first;
     while(pivot->next != NULL){
@@ -180,7 +181,7 @@ lnode* insertList(lnode **first, int id){
     }
     if(pivot->docId == id)
       return pivot;
-    return createLNode(&pivot, NULL, id);
+    return createLNode(&pivot, id);
   }
 }
 
