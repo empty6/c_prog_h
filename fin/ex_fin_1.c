@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ROW_LEN 21
+#define TERM_LEN 21
 
 typedef struct tnode{
   char *term;
@@ -21,7 +21,7 @@ void freeTree(tnode*);
 
 int main(int argc, char **argv){
   FILE *fp;
-  char *fname, termTmp[ROW_LEN];
+  char *fname, termTmp[TERM_LEN];
   tnode *root = NULL;
 
   //open input file
@@ -37,7 +37,7 @@ int main(int argc, char **argv){
   }
 
   //get terms
-  while(fgets(termTmp, ROW_LEN, fp) != NULL){
+  while(fgets(termTmp, TERM_LEN, fp) != NULL){
     strtok(termTmp, "\n\0");  //delete "\n"
     insertTerm(&root, termTmp);
   }

@@ -9,9 +9,6 @@
 #define ROW_LEN 2002
 #define TERM_LEN 21
 
-
-int count = 0;
-
 typedef struct lnode {
   int docId;          //id
   struct lnode *next; //next node
@@ -41,7 +38,7 @@ int main(int argc, char **argv){
   FILE *fp;
   int idTmp;
   char *fname, *tokenTmp, rowTmp[ROW_LEN], query[TERM_LEN];
-  tnode *root=NULL, *hit;
+  tnode *root=NULL, *hitTNode;
 
   //open input file
   if(argc!=2){
@@ -66,13 +63,13 @@ int main(int argc, char **argv){
     //cut term
     while((tokenTmp = strtok(NULL, " ")) != NULL){
       //search Tree
-      hit = search(root, tokenTmp);
-      if(hit == NULL){
+      hitTNode = search(root, tokenTmp);
+      if(hitTNode == NULL){
         //create Node
-        hit = insertTerm(&root, tokenTmp, NULL);
+        hitTNode = insertTerm(&root, tokenTmp, NULL);
       }
       //add id to posting list
-      insertList(&(hit->pos), idTmp);
+      insertList(&(hitTNode->pos), idTmp);
     }
   }
   fclose(fp);
@@ -80,11 +77,11 @@ int main(int argc, char **argv){
   //get query
   scanf("%s", query);
   //search
-  hit = search(root, query);
-  if(hit == NULL || hit->pos == NULL){
+  hitTNode = search(root, query);
+  if(hitTNode == NULL || hitTNode->pos == NULL){
     printf("Not found");
   }else{
-    printList(hit->pos);
+    printList(hitTNode->pos);
   }
 
   freeTree(root);
@@ -173,17 +170,16 @@ lnode* createLNode(lnode **parent, lnode *child, int id){
 }
 
 //add id to list
-lnode* insertList(lnode **parent, int id){
-  if(*parent == NULL){
-    return createLNode(parent, NULL, id);
+lnode* insertList(lnode **first, int id){
+  if(*first == NULL){
+    return createLNode(first, NULL, id);
   }else{
-    lnode *pivot = *parent;
+    lnode *pivot = *first;
     while(pivot->next != NULL){
       pivot = pivot->next;
     }
     if(pivot->docId == id)
       return pivot;
-//探してインサート
     return createLNode(&pivot, NULL, id);
   }
 }
