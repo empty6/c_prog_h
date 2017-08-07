@@ -253,7 +253,7 @@ tnode* search(tnode *parent, char* term){
   return NULL;
 }
 
-
+//merge 2 lists
 lnode* mergeList(lnode *l1, lnode *l2){
   lnode *first=NULL;
   while(l1 != NULL && l2 != NULL){
@@ -280,6 +280,7 @@ lnode* mergeList(lnode *l1, lnode *l2){
   return first;
 }
 
+//intersect 2 Lists
 lnode* intersectList(lnode *l1, lnode *l2){
   lnode *first=NULL;
 
@@ -333,6 +334,7 @@ void freeQuery(qnode *head){
   }
 }
 
+//execute Query calc and search
 void execQuery(qnode **queryStack, tnode *root, char *query){
   lnode *pos_1, *pos_2, *result;
   tnode *hitTNode;
@@ -342,17 +344,21 @@ void execQuery(qnode **queryStack, tnode *root, char *query){
     pos_2 = popQuery(queryStack);
     result = mergeList(pos_1, pos_2);
     pushQuery(queryStack, result);
+    freeList(pos_1);
+    freeList(pos_2);
   }else if(strcmp(query, "AND") == 0){
     //push intersect
     pos_1 = popQuery(queryStack);
     pos_2 = popQuery(queryStack);
     result = intersectList(pos_1, pos_2);
     pushQuery(queryStack, result);
+    freeList(pos_1);
+    freeList(pos_2);
   }else{
     //push 1 posting
     hitTNode = search(root, query);
     if(hitTNode != NULL){
-      pushQuery(queryStack, hitTNode->pos);
+      pushQuery(queryStack, mergeList(hitTNode->pos,NULL));
     }else{
       pushQuery(queryStack, NULL);
     }
